@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>mlx-video-rs — Native Apple Silicon Video Generation in Rust</title>
+  <meta name="description" content="High-performance Rust port of mlx-video for Wan2.1, Wan2.2, and LTX-2 video generation on Apple Silicon using Metal GPU acceleration.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    // Inline script to prevent Flash of Unstyled Content (FOUC)
+    (function() {
+      const theme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+      const meta = document.querySelector('meta[name="color-scheme"]');
+      if (meta) meta.content = theme;
+    })();
+  </script>
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <!-- Header Navigation -->
+  <header>
+    <div class="nav-container">
+      <a href="#" class="brand">
+        <img src="favicon.svg" alt="mlx-video-rs icon" class="brand-icon">
+        <span>mlx-video-rs</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#models">Models</a></li>
+        <li><a href="#playground">CLI Playground</a></li>
+        <li><a href="#hardware">Hardware</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+        <a href="https://github.com/bhubbard/mlx-video-rs" class="btn-github" target="_blank" rel="noopener noreferrer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="badge-wrapper">
+        <span class="badge-dot"></span>
+        <span>Apple Silicon Metal GPU Native • Rust 1.80+</span>
+      </div>
+      <h1>
+        High-Performance Video Generation <br>
+        <span class="gradient-text">Engineered for Apple Silicon</span>
+      </h1>
+      <p>
+        Native Rust port of <code>mlx-video</code> for state-of-the-art Diffusion Transformers (DiT). Generate cinematic video locally on your Mac with unified memory acceleration.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#playground" class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <span>Try CLI Playground</span>
+        </a>
+        <a href="https://github.com/bhubbard/mlx-video-rs" class="btn-secondary" target="_blank" rel="noopener noreferrer">
+          <span>View Source Code</span>
+        </a>
+      </div>
+
+      <!-- Quick Install Box -->
+      <div class="hero-code">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <div class="terminal-dot dot-red"></div>
+            <div class="terminal-dot dot-yellow"></div>
+            <div class="terminal-dot dot-green"></div>
+          </div>
+          <span class="terminal-title">zsh — quickstart</span>
+        </div>
+        <div class="terminal-body">
+          <code id="hero-install-cmd">git clone https://github.com/bhubbard/mlx-video-rs.git &amp;&amp; cd mlx-video-rs &amp;&amp; make build</code>
+          <button class="copy-btn" data-target="hero-install-cmd" aria-label="Copy install command">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span>Copy</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Innovations / Features -->
+    <section id="features" class="section">
+      <div class="section-header">
+        <p class="section-tag">Architecture &amp; Performance</p>
+        <h2>Built from the ground up for Metal</h2>
+        <p>Combining the safety and speed of Rust with Apple MLX unified memory architecture.</p>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-icon">⚡</div>
+          <h3>Apple Silicon Unified Memory</h3>
+          <p>Zero-copy checkpoint streaming from SafeTensors directly to Metal GPU unified RAM without duplicate CPU memory allocations.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🌀</div>
+          <h3>3-Way Factorized 3D RoPE</h3>
+          <p>Rotary Position Embeddings decomposed across temporal (F), height (H), and width (W) dimensions for fast spatial-temporal attention.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">⏱️</div>
+          <h3>Flow Matching Schedulers</h3>
+          <p>High-precision Euler and 2nd-order DPM++ 2M continuous vector-field integration with dynamic sample shifting.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🎞️</div>
+          <h3>Causal 3D VAE &amp; Tiling</h3>
+          <p>CausalConv3d decoding preserving temporal continuity, combined with spatial/temporal tiling to eliminate VRAM OOM errors on long generations.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🧩</div>
+          <h3>LoRA Dynamic Weight Fusion</h3>
+          <p>Automatic rank/alpha extraction and instant on-the-fly matrix injection (&Delta;W = s &bull; &alpha;/r &bull; B &times; A) with multi-LoRA stacking support.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🖼️</div>
+          <h3>Native Image-to-Video</h3>
+          <p>Lanczos downsampling and 36-channel latent concatenation (16 noisy + 16 image + 4 mask) for Wan2.2 I2V animation.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Supported Models Matrix -->
+    <section id="models" class="section">
+      <div class="section-header">
+        <p class="section-tag">Supported Checkpoints</p>
+        <h2>Model Matrix &amp; Presets</h2>
+        <p>Comprehensive support across both Wan and LTX diffusion video transformer families.</p>
+      </div>
+
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="all">All Models</button>
+        <button class="filter-tab" data-filter="t2v">Text-to-Video</button>
+        <button class="filter-tab" data-filter="i2v">Image-to-Video</button>
+        <button class="filter-tab" data-filter="ltx">LTX Flow</button>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Model Name</th>
+              <th>Category</th>
+              <th>Parameters</th>
+              <th>DiT Dim</th>
+              <th>Layers</th>
+              <th>Heads</th>
+              <th>Default Steps</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-category="t2v">
+              <td><strong>Wan2.1 T2V (1.3B)</strong></td>
+              <td><span class="pill-badge pill-blue">Text-to-Video</span></td>
+              <td>1.3 Billion</td>
+              <td>1536</td>
+              <td>30</td>
+              <td>12</td>
+              <td>40 steps</td>
+            </tr>
+            <tr data-category="t2v">
+              <td><strong>Wan2.1 T2V (14B)</strong></td>
+              <td><span class="pill-badge pill-blue">Text-to-Video</span></td>
+              <td>14.0 Billion</td>
+              <td>5120</td>
+              <td>40</td>
+              <td>40</td>
+              <td>40 steps</td>
+            </tr>
+            <tr data-category="t2v">
+              <td><strong>Wan2.2 T2V (14B)</strong></td>
+              <td><span class="pill-badge pill-blue">Text-to-Video (Dual)</span></td>
+              <td>14.0 Billion</td>
+              <td>5120</td>
+              <td>40</td>
+              <td>40</td>
+              <td>40 steps</td>
+            </tr>
+            <tr data-category="i2v">
+              <td><strong>Wan2.2 I2V (14B)</strong></td>
+              <td><span class="pill-badge pill-green">Image-to-Video</span></td>
+              <td>14.0 Billion</td>
+              <td>5120 (in=36)</td>
+              <td>40</td>
+              <td>40</td>
+              <td>40 steps</td>
+            </tr>
+            <tr data-category="i2v">
+              <td><strong>Wan2.2 TI2V (5B)</strong></td>
+              <td><span class="pill-badge pill-green">Text+Image-to-Video</span></td>
+              <td>5.0 Billion</td>
+              <td>3072</td>
+              <td>32</td>
+              <td>24</td>
+              <td>40 steps</td>
+            </tr>
+            <tr data-category="ltx">
+              <td><strong>LTX-2 Distilled</strong></td>
+              <td><span class="pill-badge pill-purple">Multi-Stage Flow</span></td>
+              <td>Variable</td>
+              <td>2048</td>
+              <td>28</td>
+              <td>32</td>
+              <td>8 steps</td>
+            </tr>
+            <tr data-category="ltx">
+              <td><strong>LTX-2 Dev</strong></td>
+              <td><span class="pill-badge pill-purple">Multi-Stage Flow</span></td>
+              <td>Variable</td>
+              <td>2048</td>
+              <td>28</td>
+              <td>32</td>
+              <td>40 steps</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Interactive CLI Playground -->
+    <section id="playground" class="section">
+      <div class="section-header">
+        <p class="section-tag">Developer Tools</p>
+        <h2>Interactive CLI Command Generator</h2>
+        <p>Configure generation parameters and generate ready-to-run <code>mlx-video</code> terminal commands.</p>
+      </div>
+
+      <div class="playground-container">
+        <!-- Controls Column -->
+        <div class="controls-column">
+          <div class="control-group">
+            <label for="pg-model">Model Architecture</label>
+            <select id="pg-model" class="control-select">
+              <option value="wan21_14b" selected>Wan2.1 T2V (14B)</option>
+              <option value="wan21_1_3b">Wan2.1 T2V (1.3B)</option>
+              <option value="wan22_14b">Wan2.2 T2V (14B Dual)</option>
+              <option value="wan22_i2v">Wan2.2 I2V (14B Image-to-Video)</option>
+              <option value="ltx2_distilled">LTX-2 Distilled (Fast 8-Step)</option>
+              <option value="ltx2_dev">LTX-2 Dev (Full 40-Step)</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="pg-prompt">Prompt Text</label>
+            <input type="text" id="pg-prompt" class="control-input" value="A cinematic drone shot flying through a neon futuristic Tokyo in the rain, 8k, photorealistic">
+          </div>
+
+          <div class="control-group" id="pg-image-group" style="display: none;">
+            <label for="pg-image">Input Image Path (for I2V)</label>
+            <input type="text" id="pg-image" class="control-input" value="assets/portrait.png">
+          </div>
+
+          <div class="control-group">
+            <label for="pg-res">Resolution (W x H)</label>
+            <select id="pg-res" class="control-select">
+              <option value="832x480" selected>832 x 480 (Recommended 16:9)</option>
+              <option value="1280x720">1280 x 720 (720p HD)</option>
+              <option value="768x512">768 x 512 (LTX Default)</option>
+              <option value="480x832">480 x 832 (9:16 Vertical Reel)</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label>Frames: <span id="pg-frames-val" class="range-val">81</span></label>
+            <div class="range-wrap">
+              <input type="range" id="pg-frames" min="17" max="129" step="16" value="81">
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label>Diffusion Steps: <span id="pg-steps-val" class="range-val">40</span></label>
+            <div class="range-wrap">
+              <input type="range" id="pg-steps" min="4" max="50" step="2" value="40">
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label>Guidance Scale (CFG): <span id="pg-cfg-val" class="range-val">6.0</span></label>
+            <div class="range-wrap">
+              <input type="range" id="pg-cfg" min="1.0" max="10.0" step="0.5" value="6.0">
+            </div>
+          </div>
+        </div>
+
+        <!-- Output Column -->
+        <div class="cli-preview-box">
+          <div class="cli-preview-header">
+            <span class="cli-preview-title">Generated Terminal Command</span>
+            <button class="copy-btn" data-target="pg-cli-output" aria-label="Copy generated command">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>Copy</span>
+            </button>
+          </div>
+          <div class="cli-command-output" id="pg-cli-output"></div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">
+            ⚡ Runs natively on Apple Metal unified memory GPU.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Apple Silicon Hardware Recommendations -->
+    <section id="hardware" class="section">
+      <div class="section-header">
+        <p class="section-tag">System Sizing</p>
+        <h2>Hardware Recommendations</h2>
+        <p>Memory allocations scaled for Apple Silicon unified RAM.</p>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-icon">💻</div>
+          <h3>16GB – 24GB RAM</h3>
+          <p><strong>Recommended:</strong> Wan2.1-1.3B &amp; LTX-2 Distilled at 768x512 with 49–65 frames.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚡</div>
+          <h3>36GB – 48GB RAM</h3>
+          <p><strong>Recommended:</strong> Wan2.2-TI2V-5B and Wan2.1-14B (4-bit quantized / tiled) at 832x480 with 81 frames.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🚀</div>
+          <h3>64GB – 128GB+ RAM</h3>
+          <p><strong>Recommended:</strong> Full uncompressed 14B Dual models, Wan2.2 I2V, and 720p HD long-sequence video generation.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <ul class="footer-links">
+        <li><a href="https://github.com/bhubbard/mlx-video-rs" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        <li><a href="https://github.com/Blaizzy/mlx-video" target="_blank" rel="noopener noreferrer">Upstream mlx-video</a></li>
+        <li><a href="https://github.com/bhubbard/mlx-video-rs/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT License</a></li>
+      </ul>
+      <p class="footer-copy">&copy; 2026 Brandon Hubbard. Built for Apple Silicon Metal &amp; Rust.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
