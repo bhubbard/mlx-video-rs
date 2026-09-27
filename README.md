@@ -4,6 +4,7 @@
 [![Platform](https://img.shields.io/badge/Platform-macOS%20Apple%20Silicon-black?logo=apple)](https://apple.com)
 [![Metal Accelerated](https://img.shields.io/badge/Metal-Accelerated-orange?logo=apple)](https://developer.apple.com/metal/)
 [![Rust](https://img.shields.io/badge/Rust-1.80%2B-red?logo=rust)](https://www.rust-lang.org/)
+[![Website](https://img.shields.io/badge/Website-Live%20Page-brightgreen?logo=githubpages)](https://code.brandonhubbard.com/mlx-video-rs/)
 
 High-performance, memory-efficient Rust port of [Blaizzy/mlx-video](https://github.com/Blaizzy/mlx-video) for state-of-the-art **Image-Video-Audio generation** models on Apple Silicon (M1/M2/M3/M4) using **MLX** and Apple Metal GPU acceleration.
 
